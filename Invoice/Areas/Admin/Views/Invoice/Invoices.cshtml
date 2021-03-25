@@ -1,0 +1,163 @@
+﻿@model IEnumerable<Invoice.Models.Invoices>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    ViewData["Title"] = "Invoices";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Invoices</h1>
+
+<p>
+    <a asp-action="Create" asp-controller="Invoice" asp-area="Admin" style="color:black">You Can Create New Invoices</a>
+</p>
+<div>
+    <form method="get" asp-controller="Invoice" asp-action="Search" asp-area="Admin">
+        <div class="nav-center">
+            <input class="search " name="searchInvoice" type="search">
+            <button id="btn" type="submit" class="btn-search"><i class="mdi mdi-magnify"></i>Search</button>
+        </div>
+    </form>
+</div>
+
+<form action="form-group">
+    <div class="row">
+        <div class="search search-with-start-time col-md-4 datepicker">
+            <label for="" class="search-label">Başlama tarixi</label>
+            <input id="start" type="date" class="search-input" name="start-date" placeholder="../../..." />
+            <div data-error="start-date"></div>
+        </div>
+        <div class="search search-with-end-time col-md-4 datepicker">
+            <label for="" class="search-label">Bitmə tarixi</label>
+            <input id="end" type="date" class="search-input" name="finsih-date" placeholder="../../..." />
+            <div data-error="finsih-date"></div>
+        </div>
+        <div class="search-btn col-md-3">
+            <button id="axtar" type="button" class="button for-all-button shadow-sm">
+                <i class="fas fa-search"></i>
+                Axtar
+            </button>
+        </div>
+    </div>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.InvoiceNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.InvoiceDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CustomerId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Projectname)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Paymentstatus)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Taxamount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Totalamount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Netamount)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody id="invoices">
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.InvoiceNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.InvoiceDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CustomerId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Projectname)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Paymentstatus)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Taxamount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Totalamount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Netamount)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", "Invoice", new { id = item.Id }) |
+
+                    @Html.ActionLink("Delete", "Delete", "Invoice", new { id = item.Id })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@section Scripts{
+
+    <script>
+
+        $(document).ready(function () {
+
+         
+            $("#axtar").click(function () {
+
+                var startdate = $("#start").val();
+                var enddate = $("#end").val();
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Admin/Invoice/DateFilter",
+                    data: { start: startdate, end: enddate },
+                    success: function (response) {
+                        $('#invoices').empty();
+                        for (let f of response) {
+
+                            $("#invoices").append(`<tr><td>${f.id}</td><td>${f.invoiceNumber}</td><td>${f.invoiceDate.toString().split('T')[0]}</td><td>${f.customerId}</td><td>${f.projectname}</td><td>${f.paymentstatus}</td><td>${f.taxamount}</td><td>${f.totalamount}</td><td>${f.netamount}</td><td><button id="delete" value=${f.id} class="delete-table-row"><i class="fas fa-times" aria-hidden="true"></i>x</button></td></tr>`)
+                        }
+                    }
+                });
+
+            });
+
+            $(document).on('click', '#delete', function () {
+
+                var _deleteID = $(this).val();
+                $(this).closest('tr').remove();
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Admin/Invoice/DeleteOrder",
+                    data: { deleteID: _deleteID },
+
+                });
+
+            });
+
+        });
+
+
+    </script>
+}
+

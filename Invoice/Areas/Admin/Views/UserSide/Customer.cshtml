@@ -1,0 +1,45 @@
+﻿@model IEnumerable<Invoice.Models.Customer>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Customer";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Customers</h1>
+
+<p>
+    <a asp-action="Create" asp-controller="UserSide" asp-area="Admin" style="color:black">You Can Create New Customers</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+           
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Surname)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+               
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Surname)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", "UserSide", new { id = item.Id }) |
+
+                    @Html.ActionLink("Delete", "Delete", "UserSide", new { id = item.Id })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
